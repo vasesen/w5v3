@@ -88,3 +88,5 @@
 
 x. 多页配置 
   entry和output 2点出发,先在入口webpack.common.js里配置一个other的入口webpack.prod.js里配置output里的 filename，具体见代码注释。另外在 webpack.common.js的plugins里也需对应的多页配置new HtmlWebpackPlugin()
+  多页抽离公共代码配置
+  比如 index.html和 other.html 2页面都用到了 一个第三方lodash.js这个库
