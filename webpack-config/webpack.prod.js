@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserJSPlugin = require('terser-webpack-plugin')
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin")
 const webpackCommonConf = require("./webpack.common.js");
+//const HappyPack = require('happypack')
 const { merge } = require("webpack-merge");
 const { srcPath, distPath } = require("./paths");
 
@@ -42,6 +43,12 @@ module.exports = merge(webpackCommonConf, {
           "postcss-loader",
         ],
       },
+      // {
+      //   test:/\.js$/,
+      //   //把js文件的处理 id 为babel的HappyPack 实例
+      //   use:['happypack/loader?id=babel'],
+      //   include:srcPath
+      // }
     ],
   },
   output: {
@@ -59,10 +66,42 @@ module.exports = merge(webpackCommonConf, {
      // 抽离 css 文件
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash:8].css'
-    })
+    }),
+    //忽略 moment 下的 /locale 目录
+    //new webpack.IgnorePlugin(/\.\/locale/,/moment/)
+
+    // happyPack 多进程打包
+    // new HappyPack({
+    //   id:'babel',
+    //   loaders:['babel-loader?cacheDirectory']
+    // })
   ],
   optimization: {
     // 压缩 css
     minimizer: [new TerserJSPlugin({}), new CssMinimizerPlugin()],
+    splitChunks: {
+      //initial 入口chunk，对于异步导入的文件不处理
+      //async 异步chunk，只对异步导入的文件处理
+      //all 全部chunk
+      chunks: 'all',
+      // 缓存分组
+      cacheGroups: {
+          // 第三方模块
+          vendor: {
+              name: 'vendor', // chunk 名称
+              priority: 1, // 权限更高，优先抽离，重要！！！
+              test: /node_modules/,
+              minSize: 0,  // 大小限制
+              minChunks: 1  // 最少复用过几次
+          },
+          // 公共的模块
+          common: {
+              name: 'common', // chunk 名称
+              priority: 0, // 优先级
+              minSize: 0,  // 公共模块的大小限制
+              minChunks: 2  // 公共模块最少复用过几次
+          }
+      }
+  }
   }
 });

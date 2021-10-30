@@ -20,7 +20,7 @@
     |   └── paths.js
   ```
   webpack.common.js
-  ```
+```
   module.exports = {
     entry: path.join(srcPath, 'index'),
     plugins: [
@@ -29,7 +29,7 @@
             filename: 'index.html'
         })
     ],
-}
+  }
 ```
 4.  在scr文件里新建index.html 和index.tsx 文件 
     ```
@@ -74,7 +74,7 @@
   -图片配置的配置，本地的静态图片直接，在开发过程中直接使用file-loader去引入图片的url,但是线上环境肯定要对图片进行处理，小图片转义成base64格式。所以分别在webpack.dev.js和webpack.prod.js进行配置
  - webpack.prod.js的 output 配置加上hash 这样打包出来的文件上自带hash戳,如果js没变 ，线上代码如果用户的浏览器如果说没变的js代码，就会命中缓存，请求更快。 这个点也是属于性能优化里的知识点
 
-  -css抽离压缩
+  - css抽离压缩
     前面我们将css这块的代码都放在了webpack.common.js这个文件里，属于公共的。实际上dev 和prod环境还是要区分开优化下的，webpack.common.js 这里的css配置 直接剪切到 webpack.dev.js里，prod里再重新配置。
     - npm i mini-css-extract-plugin -D
     再prod里引入插件，css的配置代码基本和dev里的css配置一样 主要是用MiniCssExtractPlugin.loader替换dev里的style-loader。
@@ -84,9 +84,28 @@
     - npm i -D optimize-css-assets-webpack-plugin //这TM又是个坑 webpcak5 不支持该用下面的
     - npm i css-minimizer-webpack-plugin -D 
     安装2个插件，再在prod文件里添加  optimization:{} 这个配置 
-    
+  - 抽离公共代码配置
+     在prod的 optimization:{}的 splitChunks 里进行cacheGroups缓存分组配置，大致意思就是:把第三方的模块区分出来 另起个名字，然后配置它的权限 大小限制 最少复用过几次这些 。 
+     再回到 webpack.common.js的plugins里 生成index.html里new HtmlWebpackPlugin()里 添加chunks:[],设置上一步在splitchunks里设定的chunks
+     
+  - IgnorePlugin 避免引入无用模块 
+    官方教程上使用的就是 moment.js 的例子，文件体积太大，打包时优化下 只取项目中用到的，压缩打包代码体积。
+    moment 在项目中引用时 不要直接默认引用全部，自己手动引用对应的模块。
+    在webpack.prod.js里plugins里进行配置 => new webpack.IgnorePlugin(/\.\/locale/,/moment/)
+    这个自行试验，官方有详细教程。
+  - noParse 避免重复打包
+   这个就是我们项目中引入进来的第三方库,是已经打包好的文件（比如lodash,vue,echart
+   这种），在webpack.common.js的 module里 添加一个 noParse属性
+  - happyPack 多进程打包 提高打包速度 （鸡肋功能 可能面试会被问） 还有 ParalleIUglifyPlugin 多进程压缩js
+    我个人觉得比较鸡肋 不知道为什么要用，不找教程详细写了。反正也不难。
+  
+  目前常规项目的优化这个操作教程应该够用了
+  还有其它 优化的配置 
+    DllPlugin 动态链接库
+    cdn加速 
+    等等 详细可以参考  https://webpack.wuhaolin.cn 电子书
+
 
 x. 多页配置 
   entry和output 2点出发,先在入口webpack.common.js里配置一个other的入口webpack.prod.js里配置output里的 filename，具体见代码注释。另外在 webpack.common.js的plugins里也需对应的多页配置new HtmlWebpackPlugin()
-  多页抽离公共代码配置
-  比如 index.html和 other.html 2页面都用到了 一个第三方lodash.js这个库
+  

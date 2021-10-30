@@ -19,7 +19,7 @@ module.exports = {
         },
         {
           test: /\.js$/,
-          use:['babel-loader'],
+          use:['babel-loader?cacheDirectory'], 
           include: srcPath,
           exclude: /node_modules/
         },
@@ -42,7 +42,7 @@ module.exports = {
         //   removeComments: true // 去掉注释
         // },
         // chunks 表示该页面要引用哪些 chunk （即上面的 index 和 other），默认全部引用
-        //chunks: ['index']  // 只引用 index.js
+        chunks: ['index', 'vendor', 'common']  // 只引用 index.js
       }),
       // new HtmlWebpackPlugin({
       //   template: path.join(srcPath, 'other.html'),
