@@ -31,21 +31,22 @@
     ],
   }
 ```
-4.  在scr文件里新建index.html 和index.tsx 文件 
+4.  在scr文件里新建index.html 和index.js文件 
     ```
     ├── src                  
     │   ├── index.html             
     │   └── index.js
     ```
-    这时在 2个文件写个初始调试的代码
-    再在package.json的 script里写下dev 和 build 对应的指令
-    "dev" :"webpack-dev-server --config webpack-config/webpack.dev.js",
-    "bulid":"webpack-dev-server --config webpack-config/webpack.prod.js"
-    这个时候试跑下 npm run dev 应该已经可以跑起来了 
+  这时在 2个文件写个初始调试的代码
+  再在package.json的 script里写下dev 和 build 对应的指令
+  "dev" :"webpack-dev-server --config webpack-config/webpack.dev.js",
+  "bulid":"webpack-dev-server --config webpack-config/webpack.prod.js"
+  这时试跑下 npm run dev 应该已经可以跑起来了 
 5. 安装vue3 需要的模块
   - npm i vue@next
   因为接下来 要新建 .vue的文件 
-  - 所以要先安装下 vue-loader 和 vue-template-compiler / npm install -D vue-loader vue-template-compiler
+  - 所以要先安装下 vue-loader 和 vue-template-compiler 
+    npm install -D vue-loader vue-template-compiler
   - 实践操作下来发现上述vue-loader是对应vue2版本的，试打包时报错 vue-loder 版本也偏低
   - 重新安装下vue-loader对应的2个插件
     - npm update vue-loader 
@@ -53,8 +54,13 @@
   
   - 上面因为用到了vue 使到了es6的语法，所以需要在配置下babel-loader 
     在webpack.common.js 配置下 vue-loader 官方文档 https://vue-loader.vuejs.org/zh/guide/#%E6%89%8B%E5%8A%A8%E8%AE%BE%E7%BD%AE
+
   - npm i --save-dev @babel/core babel-loader @babel/preset-env
+    babel-loader的配置链接 https://www.kancloud.cn/i281151/note/2321691
+    babel 7.4之后弃用了 babel-polyfill现在直接使用 core-js 和 regenerator
+    简单点理解就是 es6以上的一些api 对应api按需引入来解析
   - 根目录里 新建 .babelrc 文件
+    babel-polyfill以及在新版本中不用安装了 直接使用
   - 修改下 新建一个 App.vue 将它和 index.js 关联起来,试运行 此时应该可以成功编译展示vue3写的代码了
  
 5. 安装css模块
