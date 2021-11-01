@@ -114,4 +114,10 @@
 
 x. 多页配置 
   entry和output 2点出发,先在入口webpack.common.js里配置一个other的入口webpack.prod.js里配置output里的 filename，具体见代码注释。另外在 webpack.common.js的plugins里也需对应的多页配置new HtmlWebpackPlugin()
-  
+
+
+webpack检测和分析
+webpack-bundle-analyzer 体积分析 
+source-map-explorer
+Stats 分析可是化图
+speed-measure-webpack-plugin速度分析
